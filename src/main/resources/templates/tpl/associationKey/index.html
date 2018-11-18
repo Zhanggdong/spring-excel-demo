@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+    <head>
+        <meta content="text/html;charset=UTF-8"/>
+        <title>白名单联想词关键字</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" th:href="@{/script/bootstrap-3.3.7-dist/css/bootstrap.css}">
+        <link rel="stylesheet" th:href="@{/script/bootstrap-fileinput/css/fileinput.css}">
+        <link rel="stylesheet" th:href="@{/script/jqGrid/css/ui.jqgrid.css}">
+    </head>
+    <body>
+        <div class="container" style="padding-top: 3%;">
+            <div class="row">
+                <div class="col-sm-20">
+                    <form id="formSearch" class="form-horizontal">
+                        <div class="form-group" style="margin-top:15px">
+                            <label class="control-label col-sm-1" style="margin-left: 20px;" for="GAME_ID">游戏ID:</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="GAME_ID" name="GAME_ID">
+                            </div>
+                            <label class="control-label col-sm-1" style="width: 120px" for="GAME_NAM">游戏名称:</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="GAME_NAM">
+                            </div>
+                            <label class="control-label col-sm-1" style="width: 120px" for="KEY_NAM">搜索关键: </label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="KEY_NAM">
+                            </div>
+                            <div class="col-sm-1" style="text-align:center;">
+                                <button type="button"  id="queryBtn" class="btn btn-primary">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-3">
+                            <button type="button" id="importExcelBtn" class="btn btn-primary" data-toggle="modal" onclick="openImportExcel()" data-target="#subModal">修改</button>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="jqGrid_wrapper">
+                            <table id="table_list_2"></table>
+                            <div id="pager_list_2" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+
+            <div class="modal fade" id="mainModal" tabindex="-1" role="dialog" style="height: 95%;width: 95%">
+                <div class="modal-dialog" role="document"  style="height: 100%;width: 100%">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            <li class="fa fa-remove"></li>
+                        </button>
+                        <h5 class="modal-title">Excel文件上传</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="importFile" name="importFile" class="form-horizontal" method="post"
+                              enctype="multipart/form-data">
+                            <div class="box-body">
+                                <div>
+                                    <label class="control-label">请选择要导入的Excel文件：</label>
+                                    <input id="excelFile" name="excelFile" class="file-loading" type="file" multiple accept=".xls,.xlsx"
+                                    > <br>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/script/jquery/jquery-1.11.3.min.js}"></script>
+        <script th:src="@{/script/bootstrap-3.3.7-dist/js/bootstrap.js}"></script>
+        <script th:src="@{/script/bootstrap-fileinput/js/fileinput.js}"></script>
+        <script th:src="@{/script/bootstrap-fileinput/js/locales/zh.js}"></script>
+        <script th:src="@{/script/jqGrid/js/jquery.jqGrid.js}"></script>
+        <script th:src="@{/script/jqGrid/js/i18n/grid.locale-cn.js}"></script>
+        <script th:src="@{/js/associationKey/associationKey.js}"></script>
+        <script th:inline="javascript">
+            $('#mainModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget)
+                // 触发事件的按钮
+                var main_name = button.parent().prev().prev();
+                var main_id = button.next().next();
+                $('#updatemainname').val(main_name.text());
+                $('#updatemainid').val(main_id.val());
+            });
+        </script>
+    </body>
+</html>

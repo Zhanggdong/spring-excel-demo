@@ -1,9 +1,14 @@
 package com.vivo.soft.excel.springexceldemo.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.vivo.soft.excel.springexceldemo.dto.AssociationGameDto;
+import com.vivo.soft.excel.springexceldemo.dto.AssociationKeyDto;
+import com.vivo.soft.excel.springexceldemo.entity.AssociationKey;
 import com.vivo.soft.excel.springexceldemo.entity.AssociationKeyGame;
 import com.vivo.soft.excel.springexceldemo.query.AssociationKeyGameQuery;
 import com.vivo.soft.excel.springexceldemo.repository.AssociationKeyGameRepository;
 import com.vivo.soft.excel.springexceldemo.service.AssociationKeyGameService;
+import com.vivo.soft.excel.springexceldemo.service.AssociationKeyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +37,8 @@ public class AssociationKeyGameServiceImpl implements AssociationKeyGameService 
 
     @Resource
     private AssociationKeyGameRepository associationKeyGameRepository;
+    @Resource
+    private AssociationKeyService associationKeyService;
 
     @Override
     public Page<AssociationKeyGame> findAssociationKeyGameNoCriteria(Integer page, Integer size) {
@@ -57,5 +64,41 @@ public class AssociationKeyGameServiceImpl implements AssociationKeyGameService 
             }
         },pageable);
         return associationKeyGamePage;
+    }
+
+    @Override
+    public List<AssociationKeyGame> findAll() {
+        return associationKeyGameRepository.findAll();
+    }
+
+    @Override
+    public List<AssociationGameDto> findDtoAll() {
+        List<AssociationKeyGame> associationKeyGames = findAll();
+        List<AssociationGameDto> gameDtos = null;
+        if (associationKeyGames!=null&&associationKeyGames.size()>0){
+            gameDtos = new ArrayList<>();
+            List<Long> keyIds = new ArrayList<>();
+            for(AssociationKeyGame keyGame:associationKeyGames){
+                if (keyIds.contains(keyGame.getKeyId())){
+                    continue;
+                }
+                keyIds.add(keyGame.getKeyId());
+            }
+            List<AssociationKey> keyList = associationKeyService.findByIds(keyIds);
+            for(AssociationKeyGame keyGame:associationKeyGames){
+                String gameJson = JSONObject.toJSONString(keyGame);
+                AssociationGameDto dto = JSONObject.parseObject(gameJson,AssociationGameDto.class);
+                for (AssociationKey associationKey:keyList){
+                    if (keyGame.getKeyId().toString().equals(associationKey.getId().toString())){
+                        dto.setKeyName(associationKey.getKeyName());
+                        dto.setFromDate(associationKey.getFromDate());
+                        dto.setEndDate(associationKey.getEndDate());
+                    }
+                }
+                gameDtos.add(dto);
+            }
+
+        }
+        return gameDtos;
     }
 }

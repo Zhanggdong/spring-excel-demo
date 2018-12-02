@@ -1,8 +1,12 @@
 package com.vivo.soft.excel.springexceldemo.service;
 
+import com.vivo.soft.excel.springexceldemo.dto.AssociationGameDto;
+import com.vivo.soft.excel.springexceldemo.dto.AssociationKeyDto;
 import com.vivo.soft.excel.springexceldemo.entity.AssociationKeyGame;
 import com.vivo.soft.excel.springexceldemo.query.AssociationKeyGameQuery;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
  * @author 张贵东
@@ -15,4 +19,6 @@ import org.springframework.data.domain.Page;
 public interface AssociationKeyGameService {
     Page<AssociationKeyGame> findAssociationKeyGameNoCriteria(Integer page, Integer size);
     Page<AssociationKeyGame> findAssociationKeyGameCriteria(Integer page, Integer size, AssociationKeyGameQuery associationKeyQuery);
-}
+    List<AssociationKeyGame> findAll();
+    List<AssociationGameDto>  findDtoAll();
+ }

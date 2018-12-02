@@ -1,5 +1,7 @@
 package com.vivo.soft.excel.springexceldemo.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.vivo.soft.excel.springexceldemo.dto.AssociationKeyDto;
 import com.vivo.soft.excel.springexceldemo.entity.AssociationKey;
 import com.vivo.soft.excel.springexceldemo.query.AssociationKeyQuery;
 import com.vivo.soft.excel.springexceldemo.repository.AssociationKeyRepository;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author 张贵东
@@ -56,5 +59,33 @@ public class AssociationKeyServiceImpl implements AssociationKeyService {
             }
         },pageable);
         return associationKeyPage;
+    }
+
+    @Override
+    public List<AssociationKey> findAll() {
+        return associationKeyRepository.findAll();
+    }
+
+    @Override
+    public List<AssociationKeyDto> findDtoAll() {
+        List<AssociationKey> associationKeys = findAll();
+        List<AssociationKeyDto> dtos = null;
+        if (associationKeys!=null&&associationKeys.size()>0){
+            String json = JSONObject.toJSONString(associationKeys);
+            dtos = JSONObject.parseArray(json,AssociationKeyDto.class);
+        }
+        return dtos;
+    }
+
+    @Override
+    public AssociationKey findById(Long id) {
+        Optional<AssociationKey> optional = associationKeyRepository.findById(id);
+        return optional.get();
+    }
+
+    @Override
+    public List<AssociationKey> findByIds(List<Long> keyIds) {
+        List<AssociationKey> optional = associationKeyRepository.findAllById(keyIds);
+        return optional;
     }
 }

@@ -1,6 +1,6 @@
 package com.vivo.soft.excel.springexceldemo.util.excelTools;
 
-import com.vivo.soft.excel.springexceldemo.util.excelTools.model.DataCount;
+
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -28,9 +28,8 @@ import java.util.zip.ZipOutputStream;
  * @Description TODO
  * @Version 2.0.0
  */
-public class JsGridReportBase {
-    public SimpleDateFormat timeFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
+public class JsGridReportBase<T>{
+    public SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private HttpServletResponse response;
 
@@ -533,7 +532,7 @@ public class JsGridReportBase {
             start = (i-1) * EXCEL_MAX_CNT;
             end = i * EXCEL_MAX_CNT - 1;
             end = end>list.size()?list.size():end;
-            List<DataCount> sublist = list.subList(start, end);
+            List<T> sublist = list.subList(start, end);
             System.out.println("正在导出第 " + i + " 个文件！");
             int sheet_num = sublist.size() / SHEET_MAX_CNT; // 此excel文件分几个sheet
             if (sublist.size() % SHEET_MAX_CNT > 0) {
@@ -547,7 +546,7 @@ public class JsGridReportBase {
                 _end = j * SHEET_MAX_CNT - 1;
                 _end = _end>sublist.size()?sublist.size():_end;
                 System.out.println("正在导出第"+j+"个sheet：第"+(start+_start+1)+"~"+(start+_start+_end+1)+"条记录");
-                List<DataCount> sheetLst = sublist.subList(_start, _end);
+                List<T> sheetLst = sublist.subList(_start, _end);
                 if(bean.getChildren()!=null && bean.getChildren().length>0)
                     td = ExcelUtils.createTableData(sheetLst, ExcelUtils.createTableHeader(bean.getHearders(),bean.getChildren()),bean.getFields());
                 else
@@ -652,7 +651,7 @@ public class JsGridReportBase {
     private HashMap<String, HSSFCellStyle> initStyles(HSSFWorkbook wb) {
         HashMap<String, HSSFCellStyle> ret = new HashMap<String, HSSFCellStyle>();
         try {
-            ClassPathResource res = new ClassPathResource("module.xls", this.getClass());//注意：module.xls模板文件跟该类同一路径
+            ClassPathResource res = new ClassPathResource("module.xls");//注意：module.xls模板文件跟该类同一路径
             InputStream is = res.getInputStream();
             POIFSFileSystem fs = new POIFSFileSystem(is);
 

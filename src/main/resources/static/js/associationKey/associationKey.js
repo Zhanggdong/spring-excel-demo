@@ -17,6 +17,12 @@ KeyManager.prototype={
         $("#queryBtn").click(function () {
 
         });
+        $("#exportExcelBtn").click(function () {
+            exportExcelBtn
+            var url = "/export?method=rowSpanExport";
+            window.location.href = url;
+        });
+
     },
     bindToTableData : function () {
         /* -----------------------------加载表数据  开始  -------------------------------- */

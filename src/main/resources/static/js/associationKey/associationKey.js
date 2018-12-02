@@ -6,7 +6,8 @@ $(function () {
 function KeyManager() {
 
 }
-
+var tableObj = $("#table_list_2");
+var rowId=0;
 KeyManager.prototype={
     init : function () {
         this.bindToTableData();
@@ -41,6 +42,7 @@ KeyManager.prototype={
             url:"/associationKeys/list",
             datatype:'json',
             rownumbers: true,
+            multiselect: true,//复选框
             rowNum : 10,
             rowList : [ 10, 15,30 ],
             grouping : false,// 是否分组,默认为false
@@ -121,10 +123,81 @@ function bindSubGrid(subgrid_id, collectLineId) {
             }
         });
 }
-
+var gridHelper = new GridHelper();
 /**
  * 打开导入页面
  */
 function openImportExcel() {
     $('#mainModal').modal('show');
 }
+
+/**
+ * 上移
+ * @param up
+ */
+function operateWithOneRowById(callback) {
+    var id=jQuery('#table_list_2').jqGrid('getGridParam','selrow');
+
+    var selected = tableObj.jqGrid('getGridParam', 'selrow');
+    if (selected == null) {
+        alert("请用鼠标点击选择一行后再执行操作!");
+        return;
+    }
+    return callback(selected);
+}
+
+
+function up(selected) {
+    if (selected == 1) return;
+    else {
+        gridHelper.moveRow("up", tableObj);
+    }
+}
+
+function down(selected) {
+    gridHelper.moveRow("down", tableObj);
+}
+
+function GridHelper() {
+    
+}
+
+GridHelper.prototype={
+    //移动一行
+    this:moveRow = function(moveMethod, grid) {
+        if (grid) tableObj = grid;
+        var id;
+        // if(selRow) id=selRow;
+        // else id = getSelRow();
+        id = this.getSelRow();
+        tableObj.restoreRow(id);
+        if (id == null) return;
+        var targetId = this.getTargetId(id, moveMethod)
+        if (targetId == -1) return;
+
+        var temp1 = tableObj.getRowData(id);
+        var temp2 = tableObj.getRowData(targetId);
+        //对调行号
+        var tempRn = temp1.rn;
+        temp1.rn = temp2.rn;
+        temp2.rn = tempRn;
+        //对调数据
+        tableObj.setRowData(id, temp2);
+        tableObj.setRowData(targetId, temp1);
+        tableObj.setSelection(targetId);
+    },
+    this:getTargetId = function(selId, method, grid) {
+        if (grid) tableObj = grid;
+        var ids = tableObj.getDataIDs();
+        for (var i = 0; i < ids.length; i++) {
+            if (selId == ids[i] && method == "up") {
+                if (i == 0) return -1;
+                else return ids[i - 1];
+            }
+            if (selId == ids[i] && method == "down") {
+                if (i == ids.length - 1) return -1;
+                else return ids[i + 1];
+            }
+        }
+    }
+};
